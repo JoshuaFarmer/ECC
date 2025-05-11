@@ -53,8 +53,8 @@ int sp;
 int strsp;
 
 /* functions and variables */
-char offsets[2048];
-char is_function[2048];
+int offsets[2048];
+int is_function[2048];
 char names[2048][32];
 int variable_count;
 int label;
