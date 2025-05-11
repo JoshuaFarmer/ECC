@@ -15,6 +15,6 @@ main()
         {
                 return 2;
         }
-        putsn("hello, world!\n"+7,7);
+        putsn("hello, world!\n",14);
         return a;
 }

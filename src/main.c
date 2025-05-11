@@ -41,6 +41,7 @@
 #define TOK_RSQ 33   /* ] */
 #define TOK_SWI 34   /* switch */
 #define TOK_CAS 35   /* case */
+#define TOK_EXT 36   /* extern */
 
 int expr();
 int eval();
@@ -397,6 +398,10 @@ next()
                 {
                         tok = TOK_SWI;
                 }
+                else if (iseq(id, "extern"))
+                {
+                        tok = TOK_EXT;
+                }
                 else if (x == '(')
                 {
                         tok = TOK_FUN;
@@ -441,7 +446,7 @@ expect(x)
                 return 1;
         }
 
-        printf("failed match with %d\n", x);
+        printf("failed match with %d, got %d\n", x, tok);
         ex();
         return 0;
 }
@@ -818,6 +823,16 @@ __eval()
                 expr();
                 fprintf(fo, "\n\tpop eax");
                 block();
+                break;
+        }
+        case TOK_EXT:
+        {
+                expect(TOK_FUN);
+                fprintf(fo, "\n\textern %s", id);
+                create_function(id);
+                expect(TOK_LPA);
+                expect(TOK_RPA);
+                expect(TOK_END);
                 break;
         }
         case TOK_FUN:
