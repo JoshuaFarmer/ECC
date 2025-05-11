@@ -9,5 +9,7 @@ putsn(str,len)
 
 main()
 {
+        int a;
+        a=1;
         putsn("hello, world!\n"+7,7);
 }

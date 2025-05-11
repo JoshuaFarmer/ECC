@@ -161,6 +161,7 @@ create_function(char *name)
 
 find_variable(char *name, int *is_func, int *off)
 {
+        printf("finding=%s\n",name);
         int i;
         for (i = 0; i < 2048; ++i)
         {
@@ -170,8 +171,12 @@ find_variable(char *name, int *is_func, int *off)
                         *off = offsets[i];
                         return i;
                 }
+
+                if (i < variable_count)
+                        printf("var: %s\n", names[i]);
         }
 
+        *off = 0;
         return -1;
 }
 
@@ -487,7 +492,7 @@ factor()
         case TOK_IDE:
         {
                 char ide[sizeof(id)];
-                strcpy(ide, id);
+                copyname(ide, id);
                 find_variable(ide, &tmp, &tmp2);
                 int off = ftell(fp);
                 next();
@@ -723,14 +728,28 @@ __eval()
         case TOK_INT:
         {
                 expect(TOK_IDE);
+                char ide[32];
+                copyname(ide,id);
                 int count = 1;
-                while (match(TOK_LSQ)) /* if is array */
+                int p = ftell(fp);
+                if (match(TOK_LSQ))
                 {
                         expect(TOK_NUM);
                         count *= num;
                         expect(TOK_RSQ);
+                        while (match(TOK_LSQ)) /* if is array */
+                        {
+                                expect(TOK_NUM);
+                                count *= num;
+                                expect(TOK_RSQ);
+                        }
                 }
-                create_variable(id, count);
+                else
+                {
+                        fseek(fp,p,SEEK_SET);
+
+                }
+                create_variable(ide, count);
                 fprintf(fo, "\n\tsub esp,%d", 4 * count);
                 break;
         }
