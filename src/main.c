@@ -39,6 +39,8 @@
 #define TOK_AND 31   /* & */
 #define TOK_LSQ 32   /* [ */
 #define TOK_RSQ 33   /* ] */
+#define TOK_SWI 34   /* switch */
+#define TOK_CAS 35   /* case */
 
 int expr();
 int eval();
@@ -387,6 +389,14 @@ next()
                 {
                         tok = TOK_ASM;
                 }
+                else if (iseq(id, "case"))
+                {
+                        tok = TOK_CAS;
+                }
+                else if (iseq(id, "switch"))
+                {
+                        tok = TOK_SWI;
+                }
                 else if (x == '(')
                 {
                         tok = TOK_FUN;
@@ -492,12 +502,12 @@ factor()
                 find_variable(ide, &tmp, &tmp2);
                 int off = ftell(fp);
                 next();
-                fseek(fp, off, SEEK_SET);
                 first = 0;
                 if (tok == TOK_LSQ || tok == TOK_SET)
                 {
                         fprintf(fo, "\n\tlea edx,[ebp-%d]", tmp2);
                         push();
+                        fseek(fp, off, SEEK_SET);
                 }
                 else if (tmp)
                 {
@@ -793,6 +803,23 @@ __eval()
         case TOK_LBL:
                 block();
                 break;
+        case TOK_CAS:
+        {
+                expect(TOK_NUM);
+                fprintf(fo, "\n\tcmp eax, %d", num);
+                fprintf(fo, "\n\tjnz .m%d.end:",label+1);
+                expect(TOK_COL);
+                block();
+                break;
+        }
+        case TOK_SWI:
+        {
+                next();
+                expr();
+                fprintf(fo, "\n\tpop eax");
+                block();
+                break;
+        }
         case TOK_FUN:
         {
                 char tmp[32];

@@ -9,9 +9,12 @@ putsn(str,len)
 
 main()
 {
-        int ram[512];
         int a;
-        a=1;
+        a = 1;
+        if (a != 1)
+        {
+                return 2;
+        }
         putsn("hello, world!\n"+7,7);
         return a;
 }
