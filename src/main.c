@@ -731,7 +731,9 @@ __eval()
         switch (tok)
         {
         case TOK_ASM:
+                expect(TOK_LPA);
                 expect(TOK_STR);
+                expect(TOK_RPA);
                 popstr();
                 string_literal_count -= 1;
                 fprintf(fo, "\n\t%s", id);
