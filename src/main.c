@@ -161,9 +161,8 @@ create_function(char *name)
 
 find_variable(char *name, int *is_func, int *off)
 {
-        printf("finding=%s\n",name);
         int i;
-        for (i = 0; i < 2048; ++i)
+        for (i = 0; i < variable_count; ++i)
         {
                 if (iseq(names[i], name))
                 {
@@ -171,9 +170,6 @@ find_variable(char *name, int *is_func, int *off)
                         *off = offsets[i];
                         return i;
                 }
-
-                if (i < variable_count)
-                        printf("var: %s\n", names[i]);
         }
 
         *off = 0;
